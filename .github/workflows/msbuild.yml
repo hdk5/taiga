@@ -10,8 +10,8 @@ jobs:
       matrix:
         arch:
         - x86
-        # - x64
-        # - x64_arm64
+        - x64
+        - x64_arm64
 
     steps:
     - uses: actions/checkout@v2
@@ -24,5 +24,13 @@ jobs:
     - name: Build dependencies
       run: deps\build.bat --machine ${{matrix.arch}}
 
-    - name: Build
+    - name: Build Taiga
       run: msbuild "project\vs2019\Taiga.sln" /m /p:Configuration=Release /p:Platform=${{matrix.arch}}
+
+    - name: Build installer
+      run: makensis /DMACHINE=${{matrix.arch}} "setup\Taiga.nsi"
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: bin/${{matrix.arch}}/TaigaSetup.exe
