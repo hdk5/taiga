@@ -1,0 +1,28 @@
+name: MSBuild
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        arch:
+        - x86
+        # - x64
+        # - x64_arm64
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build dependencies
+      run: deps\build.bat --machine ${{matrix.arch}}
+
+    - name: Build
+      run: msbuild "project\vs2019\Taiga.sln" /m /p:Configuration=Release /p:Platform=${{matrix.arch}}
