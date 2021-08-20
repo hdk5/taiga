@@ -30,9 +30,11 @@ jobs:
     - name: Build installer
       run: makensis /DMACHINE=${{matrix.arch}} "setup\Taiga.nsi"
 
+    - run: mv bin/${{matrix.arch}}/TaigaSetup.exe bin/${{matrix.arch}}/TaigaSetup_${{matrix.arch}}.exe
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         prerelease: true
         tag_name: latest
-        files: bin/${{matrix.arch}}/TaigaSetup.exe
+        files: bin/${{matrix.arch}}/TaigaSetup_${{matrix.arch}}.exe
